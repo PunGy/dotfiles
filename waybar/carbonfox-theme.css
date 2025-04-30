@@ -1,0 +1,46 @@
+
+/* General Backgrounds */
+@define-color background #161616;
+@define-color foreground #f2f4f8;
+@define-color selection_background #2a2a2a;
+@define-color selection_foreground #f2f4f8;
+
+/* Cursor and URL */
+@define-color cursor #f2f4f8;
+@define-color cursor_text #161616;
+@define-color url #25be6a;
+
+/* Borders */
+@define-color active_border #78a9ff;
+@define-color inactive_border #535353;
+@define-color bell_border #3ddbd9;
+
+/* Tabs */
+@define-color active_tab_background #78a9ff;
+@define-color active_tab_foreground #0c0c0c;
+@define-color inactive_tab_background #2a2a2a;
+@define-color inactive_tab_foreground #6e6f70;
+
+/* Normal Colors */
+@define-color color0 #282828;
+@define-color color1 #ee5396;
+@define-color color2 #25be6a;
+@define-color color3 #08bdba;
+@define-color color4 #78a9ff;
+@define-color color5 #be95ff;
+@define-color color6 #33b1ff;
+@define-color color7 #dfdfe0;
+
+/* Bright Colors */
+@define-color bright_color0 #484848;
+@define-color bright_color1 #f16da6;
+@define-color bright_color2 #46c880;
+@define-color bright_color3 #2dc7c4;
+@define-color bright_color4 #8cb6ff;
+@define-color bright_color5 #c8a5ff;
+@define-color bright_color6 #52bdff;
+@define-color bright_color7 #e4e4e5;
+
+/* Extended Colors */
+@define-color extended_color16 #3ddbd9;
+@define-color extended_color17 #ff7eb6;

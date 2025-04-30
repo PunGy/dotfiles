@@ -1,0 +1,48 @@
+@import url('./carbonfox-theme.css');
+
+* {
+  font-size: 16px;
+}
+
+window#waybar {
+  all: unset;
+}
+
+.module {
+  padding: 5px 10px;
+
+  background: alpha(@background, 0.8);
+  border-radius: 10px;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, .6);
+  /* box-shadow: inset 0 -3px; */
+}
+
+#workspaces {
+  padding: 0px 5px;
+}
+
+#workspaces button {
+  all: unset;
+  color: @inactive_tab_background;
+  padding: 0px 5px;
+  transition: all .2s ease;
+}
+
+#workspaces button:hover {
+  color: @bell_border_color;
+  border: none;
+  transition: all 1s ease;
+}
+
+#workspaces button.active {
+  color: @active_tab_background;
+}
+
+#workspaces button.empty {
+  color: @inactive_tab_background;
+}
+
+#workspaces button.empty.active {
+  color: @active_tab_background;
+}
+

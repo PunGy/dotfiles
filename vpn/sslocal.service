@@ -1,0 +1,10 @@
+[Unit]
+Description=Shadowsocks Local Client
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/sslocal -c /home/pungy/.config/vpn/config.json
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
