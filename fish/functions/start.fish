@@ -1,8 +1,3 @@
-# NOTE: pnpm only, change if you use another
-# Decide how to start your dev server
-# if you have a "start" script in your local package.json - it would use it
-# otherwise would try to find "dev" script
-
 function start
     if type -q pnpm and test -f package.json
         set pkg_content (cat package.json)

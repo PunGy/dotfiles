@@ -1,3 +1,3 @@
 function nv
-  nvim $argv
+  NVIM_APPNAME=lim nvim $argv
 end

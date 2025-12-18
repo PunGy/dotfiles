@@ -6,11 +6,11 @@ function set-theme
 
     switch $argv[1]
         case "light"
-            kitty @ set-colors --all --configured ~/.config/kitty/dayfox-theme.conf
+            kitty @ set-colors --all --configured ~/.config/kitty/modus-operandi.conf
             set -Ux THEME light
             echo "Switched to 'light' theme (dayfox-theme)"
         case "dark"
-            kitty @ set-colors --all --configured ~/.config/kitty/carbonfox-theme.conf
+            kitty @ set-colors --all --configured ~/.config/kitty/modus-vivendi.conf
             set -Ux THEME dark
             echo "Switched to 'dark' theme (carbonfox-theme)"
         case '*'
