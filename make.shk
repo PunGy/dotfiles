@@ -1,0 +1,78 @@
+let home shell.home
+
+let make-path fn [dir] "{home}/.config/{dir}"
+
+let$ [KITTY-PATH FISH-PATH] [(make-path :kitty) (make-path :fish)]
+
+let HOME-FILES [:.ghci :.gitconfig]
+let FISH-FILES [
+  :fish_plugins
+  :functions/files.fish
+  :functions/nv.fish
+  :functions/start.fish
+  :functions/ptest.fish
+  :functions/setup-tabs.fish
+  :functions/gr.fish
+  :functions/ar.fish
+  :functions/set-theme.fish
+]
+
+let dotfiles-help fn [] '(
+   print "ERROR: you must specify action"
+   print "  make sync       - Copy configs from destinations to local directory"
+   print "  make install    - Copy configs from local directory back to destinations"
+)
+
+;; Sync
+
+let sync-fish fn [] '(
+  print "Syncing fish configs"
+  FISH-FILES $> list.iterate (fn [file] '(
+    file.copy :./fish "{FISH-PATH}/{file}"
+    print "Sync {FISH-PATH}/{file}"
+  ))
+)
+
+let sync-kitty fn [] '(
+  print "Syncing kitty configs"
+  file.copy :./kitty KITTY-PATH
+)
+
+let sync-home fn [] '(
+  print "Syncing home directoy"
+  HOME-FILES $> list.iterate (fn [file] '(
+    file.copy :./home "{home}/{file}"
+    print "Sync {dest}"
+  ))
+)
+
+;; Install
+
+let install-kitty fn [] '(
+  print "Installing kitty"
+  file.glob :./kitty/**/* $> list.iterate $ file.copy "{KITTY-PATH}/"
+)
+
+let install-fish fn [] '(
+  print "Installing fish"
+  file.glob :./fish/**/* $> list.iterate $ file.copy "{FISH-PATH}/"
+)
+
+let install-home fn [] '(
+  print "Installing home"
+  file.glob :./home/**/* $> list.iterate $ file.copy "{home}/"
+)
+
+let options $ list.drop 2 shell.args
+
+; let [mode, value] options
+let mode $ list.head options
+
+let options $ list.tail options
+let options (if $ list.empty? options $ [:fish :home :kitty] $ options)
+
+options $>
+  list.map (+ "{mode}-") $>
+  list.map var.get $>
+  list.iterate fn.invoke
+
