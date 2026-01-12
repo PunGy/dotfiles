@@ -16,52 +16,39 @@ let FISH-FILES [
   :functions/ar.fish
   :functions/set-theme.fish
 ]
-
-let dotfiles-help fn [] '(
-   print "ERROR: you must specify action"
-   print "  make sync       - Copy configs from destinations to local directory"
-   print "  make install    - Copy configs from local directory back to destinations"
-)
+let KITTY-FILES $ file.list KITTY-PATH
 
 ;; Sync
 
-let sync-fish fn [] '(
-  print "Syncing fish configs"
-  FISH-FILES $> list.iterate (fn [file] '(
-    file.copy :./fish "{FISH-PATH}/{file}"
-    print "Sync {FISH-PATH}/{file}"
-  ))
+let make-sync fn [files from dest] fn [] '(
+  print "\nSyncing {dest} files"
+  files $> list.iterate fn [file] '(
+    let to "./{dest}/{file}" 
+    ; file.copy to "{from}/{file}"
+    print "Sync {to}"
+  )
 )
 
-let sync-kitty fn [] '(
-  print "Syncing kitty configs"
-  file.copy :./kitty KITTY-PATH
-)
-
-let sync-home fn [] '(
-  print "Syncing home directoy"
-  HOME-FILES $> list.iterate (fn [file] '(
-    file.copy :./home "{home}/{file}"
-    print "Sync {dest}"
-  ))
-)
+let sync-fish $ make-sync FISH-FILES FISH-PATH :fish
+let sync-kitty $ make-sync KITTY-FILES KITTY-PATH :kitty
+let sync-home $ make-sync HOME-FILES home :home
 
 ;; Install
 
-let install-kitty fn [] '(
-  print "Installing kitty"
-  file.glob :./kitty/**/* $> list.iterate $ file.copy "{KITTY-PATH}/"
+let make-install fn [files dest from] fn [] '(
+  print "\nInstall {dest} files"
+  files $> list.iterate fn [file] '(
+    let to "./{dest}/{file}" 
+    ; file.copy to "{from}/{file}"
+    print "Install {to}"
+  )
 )
 
-let install-fish fn [] '(
-  print "Installing fish"
-  file.glob :./fish/**/* $> list.iterate $ file.copy "{FISH-PATH}/"
-)
+let install-fish $ make-install FISH-FILES FISH-PATH :fish
+let install-kitty $ make-install KITTY-FILES KITTY-PATH :kitty
+let install-home $ make-install HOME-FILES home :home
 
-let install-home fn [] '(
-  print "Installing home"
-  file.glob :./home/**/* $> list.iterate $ file.copy "{home}/"
-)
+;; Run
 
 let options $ list.drop 2 shell.args
 
@@ -72,7 +59,6 @@ let options $ list.tail options
 let options (if $ list.empty? options $ [:fish :home :kitty] $ options)
 
 options $>
-  list.map (+ "{mode}-") $>
-  list.map var.get $>
+  list.map (+ "{mode}-") #> var.get $>
   list.iterate fn.invoke
 
