@@ -2,13 +2,13 @@ let home shell.home
 
 let make-path fn [dir] "{home}/.config/{dir}"
 
+;; let$ — вариант `let` с деструктуризацией.
 let$ [KITTY-PATH FISH-PATH] [(make-path :kitty) (make-path :fish)]
 
 let HOME-FILES [:.ghci :.gitconfig]
 let FISH-FILES [
   :fish_plugins
   :functions/files.fish
-  :functions/nv.fish
   :functions/start.fish
   :functions/ptest.fish
   :functions/setup-tabs.fish
@@ -18,47 +18,36 @@ let FISH-FILES [
 ]
 let KITTY-FILES $ file.list KITTY-PATH
 
-;; Sync
-
-let make-sync fn [files from dest] fn [] '(
-  print "\nSyncing {dest} files"
+let make-copier fn [files from dest] fn [] '(
   files $> list.iterate fn [file] '(
-    let to "./{dest}/{file}" 
-    ; file.copy to "{from}/{file}"
-    print "Sync {to}"
+    print "Copy: {from}/{file} -> {dest}/{file}"
+    file.copy "{dest}/{file}" "{from}/{file}"
   )
 )
 
-let sync-fish $ make-sync FISH-FILES FISH-PATH :fish
-let sync-kitty $ make-sync KITTY-FILES KITTY-PATH :kitty
-let sync-home $ make-sync HOME-FILES home :home
+;; Sync
+
+let sync-fish $ make-copier FISH-FILES FISH-PATH :fish
+let sync-kitty $ make-copier KITTY-FILES KITTY-PATH :kitty
+let sync-home $ make-copier HOME-FILES home :home
 
 ;; Install
 
-let make-install fn [files dest from] fn [] '(
-  print "\nInstall {dest} files"
-  files $> list.iterate fn [file] '(
-    let to "./{dest}/{file}" 
-    ; file.copy to "{from}/{file}"
-    print "Install {to}"
-  )
-)
-
-let install-fish $ make-install FISH-FILES FISH-PATH :fish
-let install-kitty $ make-install KITTY-FILES KITTY-PATH :kitty
-let install-home $ make-install HOME-FILES home :home
+let install-fish $ make-copier FISH-FILES :fish FISH-PATH
+let install-kitty $ make-copier KITTY-FILES :kitty KITTY-PATH
+let install-home $ make-copier HOME-FILES :home home
 
 ;; Run
 
+; [:shik :backup.shk :sync :home] -> [:sync :home]
 let options $ list.drop 2 shell.args
 
-; let [mode, value] options
 let mode $ list.head options
 
 let options $ list.tail options
-let options (if $ list.empty? options $ [:fish :home :kitty] $ options)
+; sync/install по-умолчанию
+let targets (if (list.empty? options) [:fish :home :kitty] options)
 
-options $>
-  list.map (+ "{mode}-") #> var.get $>
+targets $>
+  list.map (+ "{mode}-" #> var.get) $>
   list.iterate fn.invoke
-
